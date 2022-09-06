@@ -1,8 +1,16 @@
  package com.example.roomtest;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
 #Room
@@ -21,11 +29,61 @@ MVP, MVVM과 같은 아키텍쳐 패턴에 쉽게 활용할 수 있음
 *Room 라이브러리는 Entity(model), 데이터 접근 객체(dao), 데이터베이스(db)로 구성되어 있음
  */
 
-public class MainActivity extends AppCompatActivity {
+ public class MainActivity extends AppCompatActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
-}
+     RoomDB database;
+     List<MainModel> items = new ArrayList<>();
+     ItemAdapter adapter;
+
+     EditText inputEdt;
+     Button insertBtn, resetBtn;
+     RecyclerView recyclerView;
+
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_main);
+
+         inputEdt = findViewById(R.id.inputEdt);
+         insertBtn = findViewById(R.id.insertBtn);
+         resetBtn = findViewById(R.id.resetBtn);
+         recyclerView = findViewById(R.id.recyclerView);
+
+         database = RoomDB.getInstance(this);
+         items = database.mainDao().getAll();
+         adapter = new ItemAdapter(MainActivity.this, items);
+
+         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+         recyclerView.setAdapter(adapter);
+
+         insertBtn.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                 String str = inputEdt.getText().toString().trim();
+                 if (!str.equals("")) {
+                     MainModel item = new MainModel();
+                     item.setText(str);
+                     database.mainDao().insert(item);
+
+                     inputEdt.setText("");
+                     items.clear();
+
+                     items.addAll(database.mainDao().getAll());
+                     adapter.notifyDataSetChanged();
+                 }
+             }
+         });
+
+         resetBtn.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                 database.mainDao().reset(items);
+
+                 items.clear();
+
+                 items.addAll(database.mainDao().getAll());
+                 adapter.notifyDataSetChanged();
+             }
+         });
+     }
+ }

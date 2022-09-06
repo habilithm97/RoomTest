@@ -26,8 +26,8 @@ public interface MainDao {
     @Delete
     void reset(List<MainModel> mainModel);
 
-    @Query("UPDATE my_tb SET text = :uText WHERE id = :uID") // 아이디를 기준으로 텍스트 수정
-    void update(int uID, String uText);
+    @Query("UPDATE my_tb SET text = :str WHERE id = :sID") // 아이디를 기준으로 텍스트 수정
+    void update(int sID, String str);
 
     @Query("SELECT * FROM my_tb") // 테이블의 모든 컬럼을 조회
     List<MainModel> getAll();

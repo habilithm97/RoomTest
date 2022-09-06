@@ -46,8 +46,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
                 MainModel item = items.get(holder.getAdapterPosition());
-                int uID = item.getId();
-                String uText = item.getText();
+                int sID = item.getId();
+                String str = item.getText();
 
                 Dialog dialog = new Dialog(context);
                 dialog.setContentView(R.layout.update_dialog);
@@ -60,15 +60,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 EditText dialogEdt = dialog.findViewById(R.id.dialogEdt);
                 Button updateBtn = dialog.findViewById(R.id.updateBtn);
 
-                dialogEdt.setText(uText);
+                dialogEdt.setText(str);
 
                 updateBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss(); // 대화상자 종료(대화상자의 버튼을 눌러 종료된 경우, cancel()은 뒤로가기 버튼을 눌러 종료된 경우)
-                        String uText = dialogEdt.getText().toString().trim();
+                        String str = dialogEdt.getText().toString().trim();
 
-                        database.mainDao().update(uID, uText);
+                        database.mainDao().update(sID, str);
                         items.clear();
                         items.addAll(database.mainDao().getAll());
                         notifyDataSetChanged();
